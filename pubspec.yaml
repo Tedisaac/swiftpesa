@@ -1,0 +1,45 @@
+name: swiftpesa
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  flutter_riverpod: ^2.6.1
+  go_router: ^14.6.2
+  google_fonts: ^6.2.1
+  qr_flutter: ^4.1.0
+  shared_preferences: ^2.3.4
+  intl: ^0.20.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  widgetbook: ^3.21.0
+  widgetbook_annotation: ^3.10.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/fonts/
+
+  fonts:
+    - family: Clash Display
+      fonts:
+        - asset: assets/fonts/gilroy_regular.ttf
+          weight: 400
+        - asset: assets/fonts/gilroy_medium.ttf
+          weight: 500
+        - asset: assets/fonts/gilroy_semibold.ttf
+          weight: 600
+        - asset: assets/fonts/gilroy_bold.ttf
+          weight: 700
