@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
+import '../../../send_money/providers/send_money_provider.dart';
 
-class QuickActions extends StatelessWidget {
+class QuickActions extends ConsumerWidget {
   const QuickActions({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Row(
@@ -16,7 +19,9 @@ class QuickActions extends StatelessWidget {
             label: 'Send',
             color: AppColors.primary,
             onTap: () {
-              // TODO: Navigate to Send Money
+              // Reset send money state before navigating
+              ref.read(sendMoneyProvider.notifier).reset();
+              context.push('/send-money');
             },
           ),
           _ActionItem(
@@ -24,7 +29,7 @@ class QuickActions extends StatelessWidget {
             label: 'Receive',
             color: AppColors.warning,
             onTap: () {
-              // TODO: Navigate to Receive Money
+              context.push('/receive');
             },
           ),
           _ActionItem(
@@ -56,10 +61,10 @@ class _ActionItem extends StatelessWidget {
   final VoidCallback onTap;
 
   const _ActionItem({
-    required final this.icon,
-    required final this.label,
-    required final this.color,
-    required final this.onTap,
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
   });
 
   @override

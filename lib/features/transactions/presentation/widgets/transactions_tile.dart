@@ -6,10 +6,12 @@ import '../../../../models/transactions.dart';
 class TransactionTile extends StatelessWidget {
   const TransactionTile({
     required this.transaction,
+    this.showStatus = false,
     super.key,
   });
 
   final Transaction transaction;
+  final bool showStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -37,23 +39,38 @@ class TransactionTile extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  _formatDateTime(transaction.date),
-                  style: textTheme.bodySmall?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      showStatus
+                          ? _formatDateTimeWithType()
+                          : _formatDateTime(transaction.date),
+                      style: textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    if (showStatus) ...[
+                      const SizedBox(width: 8),
+                      _buildStatusBadge(textTheme),
+                    ],
+                  ],
                 ),
               ],
             ),
           ),
           const SizedBox(width: 12),
           // Amount
-          Text(
-            _formatAmount(),
-            style: textTheme.bodyLarge?.copyWith(
-              color: _getAmountColor(),
-              fontWeight: FontWeight.w700,
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                _formatAmount(),
+                style: textTheme.bodyLarge?.copyWith(
+                  color: _getAmountColor(),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -139,5 +156,67 @@ class TransactionTile extends StatelessWidget {
     } else {
       return DateFormat('MMM d, y').format(date);
     }
+  }
+
+  /// Format date/time with transaction type (for detailed view)
+  String _formatDateTimeWithType() {
+    final time = DateFormat('h:mm a').format(transaction.date);
+    final typeLabel = _getTypeLabel();
+    return '$time • $typeLabel';
+  }
+
+  /// Get transaction type label
+  String _getTypeLabel() {
+    switch (transaction.type) {
+      case TransactionType.sent:
+        return 'Sent';
+      case TransactionType.received:
+        return 'Received';
+      case TransactionType.bill:
+        return 'Bill Payment';
+      case TransactionType.airtime:
+        return 'Airtime';
+    }
+  }
+
+  /// Build status badge
+  Widget _buildStatusBadge(TextTheme textTheme) {
+    final Color bgColor;
+    final Color textColor;
+    final String label;
+
+    switch (transaction.status) {
+      case TransactionStatus.completed:
+        bgColor = AppColors.primary.withOpacity(0.15);
+        textColor = AppColors.primary;
+        label = 'Done';
+        break;
+      case TransactionStatus.pending:
+        bgColor = AppColors.warning.withOpacity(0.15);
+        textColor = AppColors.warning;
+        label = 'Pending';
+        break;
+      case TransactionStatus.failed:
+        bgColor = AppColors.danger.withOpacity(0.15);
+        textColor = AppColors.danger;
+        label = 'Failed';
+        break;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        label,
+        style: textTheme.labelSmall?.copyWith(
+          color: textColor,
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
   }
 }
